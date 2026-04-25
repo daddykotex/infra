@@ -15,6 +15,7 @@
         modules = [
           disko.nixosModules.disko
           ./configuration.nix
+          ./box1/default.nix
         ];
       };
     };
