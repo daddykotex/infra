@@ -23,6 +23,18 @@ in
     virtualHosts = lib.mkOption {
       type = lib.types.attrsOf (lib.types.submodule {
         options = {
+          useACMEHost = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "Name of the myAcme-managed certificate to use for this virtual host. Usually the domain name.";
+          };
+
+          forceSSL = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Redirect all HTTP traffic to HTTPS.";
+          };
+
           locations = lib.mkOption {
             type = lib.types.attrsOf (lib.types.submodule {
               options = {
@@ -57,7 +69,13 @@ in
       enable = true;
       user = cfg.user;
       group = cfg.group;
-      virtualHosts = cfg.virtualHosts;
+      virtualHosts = lib.mapAttrs (_name: vhost: {
+        inherit (vhost) forceSSL;
+        useACMEHost = vhost.useACMEHost;
+        locations = vhost.locations // lib.optionalAttrs (vhost.useACMEHost != null) {
+          "/.well-known/".root = "/var/lib/acme/acme-challenge";
+        };
+      }) cfg.virtualHosts;
     };
 
     networking.firewall.allowedTCPPorts = [ 80 443 ];

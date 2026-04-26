@@ -1,12 +1,24 @@
+let
+  domain = "box1.davidfrancoeur.com";
+in
 {
-  imports = [ ../modules/nginx.nix ];
+  imports = [ ../modules/nginx.nix ../modules/acme.nix ];
+
+  services.myAcme = {
+    enable = true;
+    email = "info@davidfrancoeur.com";
+    nginxGroup = "box1";
+    domains = [ domain ];
+  };
 
   services.myNginx = {
     enable = true;
     user = "box1";
     group = "box1";
     virtualHosts = {
-      "_" = {
+      ${domain} = {
+        useACMEHost = domain;
+        forceSSL = true;
         locations."/" = {
           extraConfig = ''
             return 200 "<p>it works</p>";
