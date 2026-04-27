@@ -1,8 +1,9 @@
+{ config, ... }:
 let
   domain = "box1.davidfrancoeur.com";
 in
 {
-  imports = [ ../modules/nginx.nix ../modules/acme.nix ];
+  imports = [ ../modules/nginx.nix ../modules/acme.nix ../modules/app.nix ];
 
   services.myAcme = {
     enable = true;
@@ -27,5 +28,13 @@ in
         };
       };
     };
+  };
+
+  age.secrets.lmah-env.file = ../secrets/lmah-env.age;
+  services.myApp = {
+    enable = true;
+    name = "lmah";
+    binary = "/run/current-system/sw/bin/sleep infinity";
+    envFile = config.age.secrets.lmah-env.path;
   };
 }
