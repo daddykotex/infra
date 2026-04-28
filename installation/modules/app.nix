@@ -31,6 +31,20 @@ in
       default = [];
       description = "Additional packages to add to the service's PATH.";
     };
+
+    direnv = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether to enable direnv integration.";
+      };
+
+      envrcContent = lib.mkOption {
+        type = lib.types.str;
+        default = "dotenv";
+        description = "Content to write to the .envrc file.";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -52,7 +66,7 @@ in
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
 
-      path = [ pkgs.direnv ] ++ cfg.extraPackages;
+      path = (lib.optional cfg.direnv.enable pkgs.direnv) ++ cfg.extraPackages;
 
       serviceConfig = {
         User = cfg.name;
@@ -62,11 +76,13 @@ in
           # link `age` decrypted secret to .env file
           ln -sf ${cfg.envFile} /opt/${cfg.name}/.env
 
+          ${lib.optionalString cfg.direnv.enable ''
           # enable direnv
-          echo "dotenv" > /opt/${cfg.name}/.envrc
+          echo "${cfg.direnv.envrcContent}" > /opt/${cfg.name}/.envrc
 
-          # allow the .env file through direnv
+          # allow the .envrc through direnv
           direnv allow /opt/${cfg.name}
+          ''}
 
           # make data directory
           mkdir -p /opt/${cfg.name}/data
