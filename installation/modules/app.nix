@@ -46,12 +46,24 @@ in
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
 
+      path = [ pkgs.direnv ];
+
       serviceConfig = {
         User = cfg.name;
         Group = cfg.name;
         WorkingDirectory = "/opt/${cfg.name}";
-        ExecStartPre = pkgs.writeShellScript "${cfg.name}-link-env" ''
+        ExecStartPre = pkgs.writeShellScript "${cfg.name}-start-pre" ''
+          # link `age` decrypted secret to .env file
           ln -sf ${cfg.envFile} /opt/${cfg.name}/.env
+
+          # enable direnv
+          echo "dotenv" > /opt/${cfg.name}/.envrc
+
+          # allow the .env file through direnv
+          direnv allow /opt/${cfg.name}
+
+          # make data directory
+          mkdir -p /opt/${cfg.name}/data
         '';
         ExecStart = cfg.binary;
         Restart = "on-failure";
