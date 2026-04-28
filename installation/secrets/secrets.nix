@@ -7,6 +7,7 @@ let
 in
 {
   "lmah-env.age".publicKeys = [ dfrancoeur box1 ];
+  "lmah-calendar-gcp-sa-key-json.age".publicKeys = [ dfrancoeur box1 ];
   "armored-secret.age" = {
     publicKeys = [ dfrancoeur ];
     armor = true;

@@ -37,6 +37,10 @@ in
     };
   };
 
+  # Secrets decryption through agenix
+  age.secrets.lmah-env.file = ../secrets/lmah-env.age;
+  age.secrets.lmah-calendar-gcp-sa-key-json.file = ../secrets/lmah-calendar-gcp-sa-key-json.age;
+
   # SQLite database replication
   services.litestream = {
     enable = true;
@@ -44,7 +48,6 @@ in
   };
 
   # LMAH inventory app
-  age.secrets.lmah-env.file = ../secrets/lmah-env.age;
   services.lmah = {
     version = "0.1.3";
     hash = "sha256:7ad05e8ed014fa5bc553087d76911317d7cf969e3b5a2e6a1ba5155a3a451a80";
