@@ -10,6 +10,7 @@ in
     ../modules/apps/lmah.nix
   ];
 
+  # SSL renewal service
   services.myAcme = {
     enable = true;
     email = "info@davidfrancoeur.com";
@@ -17,6 +18,7 @@ in
     domains = [ domain ];
   };
 
+  # Nginx for SSL termination (and ACME challenges)
   services.myNginx = {
     enable = true;
     user = "box1";
@@ -35,6 +37,13 @@ in
     };
   };
 
+  # SQLite database replication
+  services.litestream = {
+    enable = true;
+    settings = {};
+  };
+
+  # LMAH inventory app
   age.secrets.lmah-env.file = ../secrets/lmah-env.age;
   services.lmah = {
     version = "0.1.3";
