@@ -35,6 +35,12 @@ in
     enable = true;
     name = "lmah";
     binary = "/run/current-system/sw/bin/sleep infinity";
-    envFile = config.age.secrets.lmah-env.path;
+    secrets = [
+      {
+        description = "Application environment variables";
+        source = config.age.secrets.lmah-env.path;
+        target = ".env";
+      }
+    ];
   };
 }

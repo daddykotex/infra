@@ -21,9 +21,26 @@ in
       description = "Path to the application binary (or command) to run.";
     };
 
-    envFile = lib.mkOption {
-      type = lib.types.path;
-      description = "Path to the decrypted .env file (e.g. config.age.secrets.lmah-env.path).";
+    secrets = lib.mkOption {
+      type = lib.types.listOf (lib.types.submodule {
+        options = {
+          description = lib.mkOption {
+            type = lib.types.str;
+            default = "";
+            description = "Human-readable description of the secret.";
+          };
+          source = lib.mkOption {
+            type = lib.types.path;
+            description = "Path to the decrypted secret (e.g. config.age.secrets.my-secret.path).";
+          };
+          target = lib.mkOption {
+            type = lib.types.str;
+            description = "Relative path inside the working directory where the secret is symlinked (e.g. \".env\").";
+          };
+        };
+      });
+      default = [];
+      description = "Secrets to symlink into the working directory at service start.";
     };
 
     extraPackages = lib.mkOption {
@@ -73,8 +90,9 @@ in
         Group = cfg.name;
         WorkingDirectory = "/opt/${cfg.name}";
         ExecStartPre = pkgs.writeShellScript "${cfg.name}-start-pre" ''
-          # link `age` decrypted secret to .env file
-          ln -sf ${cfg.envFile} /opt/${cfg.name}/.env
+          ${lib.concatMapStrings (secret: ''
+          ln -sf ${secret.source} /opt/${cfg.name}/${secret.target}
+          '') cfg.secrets}
 
           ${lib.optionalString cfg.direnv.enable ''
           # enable direnv
