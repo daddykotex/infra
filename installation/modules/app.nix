@@ -25,6 +25,12 @@ in
       type = lib.types.path;
       description = "Path to the decrypted .env file (e.g. config.age.secrets.lmah-env.path).";
     };
+
+    extraPackages = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = [];
+      description = "Additional packages to add to the service's PATH.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -46,7 +52,7 @@ in
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
 
-      path = [ pkgs.direnv ];
+      path = [ pkgs.direnv ] ++ cfg.extraPackages;
 
       serviceConfig = {
         User = cfg.name;
