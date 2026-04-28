@@ -3,7 +3,12 @@ let
   domain = "box1.davidfrancoeur.com";
 in
 {
-  imports = [ ../modules/nginx.nix ../modules/acme.nix ../modules/app.nix ];
+  imports = [
+    ../modules/nginx.nix
+    ../modules/acme.nix
+    ../modules/app.nix
+    ../modules/apps/lmah.nix
+  ];
 
   services.myAcme = {
     enable = true;
@@ -31,9 +36,14 @@ in
   };
 
   age.secrets.lmah-env.file = ../secrets/lmah-env.age;
+  services.lmah = {
+    version = "0.1.3";
+    hash = "sha256:7ad05e8ed014fa5bc553087d76911317d7cf969e3b5a2e6a1ba5155a3a451a80";
+  };
   services.myApp = {
     enable = true;
     name = "lmah";
+    # binary = "${config.services.lmah.package}/bin/lmah-server";
     binary = "/run/current-system/sw/bin/sleep infinity";
     secrets = [
       {
