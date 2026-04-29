@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
   domain = "box1.davidfrancoeur.com";
 in
@@ -45,6 +45,10 @@ in
   services.litestream = {
     enable = true;
     settings = {};
+    # Ideally, we'd have two service keys: 1 for the app, one for the litestream replication
+    environmentFile = pkgs.writeText "litestream-env" ''
+      GOOGLE_APPLICATION_CREDENTIALS=${config.age.secrets.lmah-calendar-gcp-sa-key-json.path}
+    '';
   };
 
   # LMAH inventory app
@@ -62,6 +66,12 @@ in
         description = "Application environment variables";
         source = config.age.secrets.lmah-env.path;
         target = ".env";
+      }
+
+      {
+        description = "Google Service Account keys";
+        source = config.age.secrets.lmah-calendar-gcp-sa-key-json.path;
+        target = ".gcp_lmah-calendar_sa_key.json";
       }
     ];
   };
