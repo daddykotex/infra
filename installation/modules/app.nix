@@ -43,6 +43,12 @@ in
       description = "Secrets to symlink into the working directory at service start.";
     };
 
+    extraGroups = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = "Additional groups to add the service user to.";
+    };
+
     extraPackages = lib.mkOption {
       type = lib.types.listOf lib.types.package;
       default = [];
@@ -68,6 +74,7 @@ in
     users.users.${cfg.name} = {
       isSystemUser = true;
       group = cfg.name;
+      extraGroups = cfg.extraGroups;
       home = "/opt/${cfg.name}";
       createHome = false;
     };
@@ -101,9 +108,6 @@ in
           # allow the .envrc through direnv
           direnv allow /opt/${cfg.name}
           ''}
-
-          # make data directory
-          mkdir -p /opt/${cfg.name}/data
         '';
         ExecStart = cfg.binary;
         Restart = "on-failure";
