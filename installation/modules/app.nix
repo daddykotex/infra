@@ -106,7 +106,7 @@ in
           echo "${cfg.direnv.envrcContent}" > /opt/${cfg.name}/.envrc
 
           # allow the .envrc through direnv
-          direnv allow /opt/${cfg.name}
+          ${pkgs.direnv}/bin/direnv allow /opt/${cfg.name}
           ''}
         '';
         ExecStart = cfg.binary;
