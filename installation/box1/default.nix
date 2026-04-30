@@ -4,7 +4,7 @@ let
   group_gcp_lmah = "gcp-lmah";
   group_litestream_lmah = "litestream-lmah";
 
-  litestream_db_lmah = "/var/run/litestream/lmah.db";
+  litestream_db_lmah = "/var/run/litestream/lmah/lmah.db";
   litestream_replica_lmah = "gs://lmah-db-replica/lmah-qa";
 in
 {
@@ -70,6 +70,10 @@ in
     mkdir -p /var/run/litestream
     chown litestream:litestream /var/run/litestream
 
+    mkdir /var/run/litestream/lmah
+    chmod 2770 /var/run/litestream/lmah
+    chown litestream:${group_litestream_lmah} /var/run/litestream/lmah
+
     # init db for lmah
     ${pkgs.litestream}/bin/litestream restore -if-db-not-exists -o ${litestream_db_lmah} ${litestream_replica_lmah}
     chown litestream:${group_litestream_lmah} ${litestream_db_lmah}
@@ -105,6 +109,7 @@ in
   services.myApp = {
     enable = true;
     name = "lmah";
+    litestream = true;
     extraGroups = [
       group_gcp_lmah # ensure both can read the secret # TODO use different secret keys
       group_litestream_lmah # ensure both can access the db

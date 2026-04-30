@@ -55,6 +55,12 @@ in
       description = "Additional packages to add to the service's PATH.";
     };
 
+    litestream = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Whether is app depends on litestream, or not.";
+    };
+
     direnv = {
       enable = lib.mkOption {
         type = lib.types.bool;
@@ -88,7 +94,8 @@ in
     systemd.services.${cfg.name} = {
       description = "${cfg.name} application service";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+      after = [ "network.target" ] ++ lib.optional cfg.litestream "litestream.service";
+      requires = lib.optional cfg.litestream "litestream.service";
 
       path = (lib.optional cfg.direnv.enable pkgs.direnv) ++ cfg.extraPackages;
 
