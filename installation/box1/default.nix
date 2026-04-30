@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let
   domain = "box1.davidfrancoeur.com";
-  
+
   lmahDomain = "lmah-qa.lamarieealhonneur.com";
   lmahPort = 3000;
   group_gcp_lmah = "gcp-lmah";
@@ -77,7 +77,7 @@ in
     '';
     databases.lmah = {
       createGroup = true;
-      settings = { replicas = [{ url = "gs://lmah-db-replica/lmah-qa"; }]; };
+      settings = { replicas = [{ url = "gs://lmah-db-replica/lmah-qa/v1"; }]; };
     };
   };
 
