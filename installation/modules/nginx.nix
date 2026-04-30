@@ -42,6 +42,10 @@ in
                   type = lib.types.nullOr lib.types.str;
                   default = null;
                 };
+                proxyPass = lib.mkOption {
+                  type = lib.types.nullOr lib.types.str;
+                  default = null;
+                };
                 extraConfig = lib.mkOption {
                   type = lib.types.lines;
                   default = "";
@@ -72,7 +76,11 @@ in
       virtualHosts = lib.mapAttrs (_name: vhost: {
         inherit (vhost) forceSSL;
         useACMEHost = vhost.useACMEHost;
-        locations = vhost.locations // lib.optionalAttrs (vhost.useACMEHost != null) {
+        locations = lib.mapAttrs (_loc: locCfg: {
+          inherit (locCfg) extraConfig;
+          return = locCfg.return;
+          proxyPass = locCfg.proxyPass;
+        }) vhost.locations // lib.optionalAttrs (vhost.useACMEHost != null) {
           "/.well-known/".root = "/var/lib/acme/acme-challenge";
         };
       }) cfg.virtualHosts;

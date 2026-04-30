@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
 let
   domain = "box1.davidfrancoeur.com";
+  
+  lmahDomain = "lmah-qa.lamarieealhonneur.com";
+  lmahPort = 3000;
   group_gcp_lmah = "gcp-lmah";
 in
 {
@@ -17,7 +20,7 @@ in
     enable = true;
     email = "info@davidfrancoeur.com";
     nginxGroup = "box1";
-    domains = [ domain ];
+    domains = [ domain lmahDomain ];
   };
 
   # Nginx for SSL termination (and ACME challenges)
@@ -34,6 +37,13 @@ in
             return 200 "<p>it works</p>";
             add_header Content-Type text/html;
           '';
+        };
+      };
+      ${lmahDomain} = {
+        useACMEHost = lmahDomain;
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "http://localhost:${toString lmahPort}";
         };
       };
     };
@@ -84,7 +94,7 @@ in
       group_gcp_lmah # ensure both can read the secret # TODO use different secret keys
       config.services.myLitestream.databases.lmah.group # ensure both can access the db
     ];
-    binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${config.services.myLitestream.databases.lmah.path}";
+    binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${config.services.myLitestream.databases.lmah.path} --port ${toString lmahPort}";
     secrets = [
       {
         description = "Application environment variables";
