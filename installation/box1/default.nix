@@ -103,8 +103,8 @@ in
 
   # LMAH inventory app
   services.lmah = {
-    version = "0.1.3";
-    hash = "sha256:7ad05e8ed014fa5bc553087d76911317d7cf969e3b5a2e6a1ba5155a3a451a80";
+    version = "0.1.4";
+    hash = "sha256:c7ae1e85120d4cf1f9ba32976a482e15355c9560b455beb09d0aa59afaf5e198";
   };
   services.myApp = {
     enable = true;
@@ -114,8 +114,7 @@ in
       group_gcp_lmah # ensure both can read the secret # TODO use different secret keys
       group_litestream_lmah # ensure both can access the db
     ];
-    # binary = "${config.services.lmah.package}/bin/lmah-server";
-    binary = "/run/current-system/sw/bin/sleep infinity";
+    binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${litestream_db_lmah}";
     secrets = [
       {
         description = "Application environment variables";

@@ -18,6 +18,9 @@ let
         inherit hash;
       };
 
+      nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+      buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+
       dontUnpack = true;
       dontBuild = true;
 
