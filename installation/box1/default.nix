@@ -2,10 +2,6 @@
 let
   domain = "box1.davidfrancoeur.com";
   group_gcp_lmah = "gcp-lmah";
-  group_litestream_lmah = "litestream-lmah";
-
-  litestream_db_lmah = "/var/run/litestream/lmah/lmah.db";
-  litestream_replica_lmah = "gs://lmah-db-replica/lmah-qa";
 in
 {
   imports = [
@@ -13,6 +9,7 @@ in
     ../modules/acme.nix
     ../modules/app.nix
     ../modules/apps/lmah.nix
+    ../modules/litestream.nix
   ];
 
   # SSL renewal service
@@ -59,46 +56,19 @@ in
   # Group that can be used for litestream and the app to have access to the GCP
   # service account credentials
   users.groups.${group_gcp_lmah} = {};
-  
-  # Group that can be used for litestream and the app to share the database file
-  users.groups.${group_litestream_lmah} = {};
-
-  # Ensure litestream can read the GCP Service Account secret
-  users.users.litestream.extraGroups = [ group_gcp_lmah group_litestream_lmah ];
-
-  systemd.services.litestream.serviceConfig.ExecStartPre = "+" + toString (pkgs.writeShellScript "litestream-start-pre" ''
-    mkdir -p /var/run/litestream
-    chown litestream:litestream /var/run/litestream
-
-    mkdir /var/run/litestream/lmah
-    chmod 2770 /var/run/litestream/lmah
-    chown litestream:${group_litestream_lmah} /var/run/litestream/lmah
-
-    # init db for lmah
-    ${pkgs.litestream}/bin/litestream restore -if-db-not-exists -o ${litestream_db_lmah} ${litestream_replica_lmah}
-    chown litestream:${group_litestream_lmah} ${litestream_db_lmah}
-    chmod 660 ${litestream_db_lmah}
-  '');
 
   # SQLite database replication
-  services.litestream = {
+  # Ideally, we'd have two service keys: 1 for the app, one for the litestream replication
+  services.myLitestream = {
     enable = true;
-    settings = {
-      dbs = [
-        {
-          path = litestream_db_lmah;
-          replicas = [
-            {
-              url = litestream_replica_lmah;
-            }
-          ];
-        }
-      ];
-    };
-    # Ideally, we'd have two service keys: 1 for the app, one for the litestream replication
+    extraGroups = [ group_gcp_lmah ];
     environmentFile = pkgs.writeText "litestream-env" ''
       GOOGLE_APPLICATION_CREDENTIALS=${config.age.secrets.lmah-calendar-gcp-sa-key-json.path}
     '';
+    databases.lmah = {
+      createGroup = true;
+      settings = { replicas = [{ url = "gs://lmah-db-replica/lmah-qa"; }]; };
+    };
   };
 
   # LMAH inventory app
@@ -112,9 +82,9 @@ in
     litestream = true;
     extraGroups = [
       group_gcp_lmah # ensure both can read the secret # TODO use different secret keys
-      group_litestream_lmah # ensure both can access the db
+      config.services.myLitestream.databases.lmah.group # ensure both can access the db
     ];
-    binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${litestream_db_lmah}";
+    binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${config.services.myLitestream.databases.lmah.path}";
     secrets = [
       {
         description = "Application environment variables";
