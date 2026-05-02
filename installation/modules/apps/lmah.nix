@@ -30,6 +30,7 @@ let
 
       installPhase = ''
         install -Dm755 server $out/bin/lmah-server
+        cp -r static $out/static
       '';
 
       meta = {
