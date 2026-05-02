@@ -55,6 +55,12 @@ in
       description = "Additional packages to add to the service's PATH.";
     };
 
+    extraPreStart = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+      description = "Shell script to append to ExecStartPre before the service starts.";
+    };
+
     litestream = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -115,6 +121,8 @@ in
           # allow the .envrc through direnv
           ${pkgs.direnv}/bin/direnv allow /opt/${cfg.name}
           ''}
+
+          ${cfg.extraPreStart}
         '';
         ExecStart = cfg.binary;
         Restart = "on-failure";

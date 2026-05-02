@@ -83,8 +83,8 @@ in
 
   # LMAH inventory app
   services.lmah = {
-    version = "0.1.4";
-    hash = "sha256:c7ae1e85120d4cf1f9ba32976a482e15355c9560b455beb09d0aa59afaf5e198";
+    version = "0.1.6";
+    hash = "sha256:27d1c82f923aeefb73ac9954509d31093bb48b0119ca8e20719df0d749836faf";
   };
   services.myApp = {
     enable = true;
@@ -94,6 +94,10 @@ in
       group_gcp_lmah # ensure both can read the secret # TODO use different secret keys
       config.services.myLitestream.databases.lmah.group # ensure both can access the db
     ];
+    
+    extraPreStart = ''                                                                                                                                                                                       
+      cp -rT ${config.services.lmah.package}/static /opt/lmah/static                                                                                                                                       
+    '';
     binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${config.services.myLitestream.databases.lmah.path} --port ${toString lmahPort}";
     secrets = [
       {
