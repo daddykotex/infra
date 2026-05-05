@@ -4,10 +4,13 @@ let
 
   # target systems
   box1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIpBdCFDihFhTDcAOt99DzSvt2tekKiXKh79v/9J/BJL";
+  rasp1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIpBdCFDihFhTDcAOt99DzSvt2tekKiXKh79v/9J/BJL"; # TODO set the real key
 in
 {
   "lmah-env.age".publicKeys = [ dfrancoeur box1 ];
   "lmah-calendar-gcp-sa-key-json.age".publicKeys = [ dfrancoeur box1 ];
+  "rasp1-wifi-password.age".publicKeys = [ dfrancoeur rasp1 ];
+
   "armored-secret.age" = {
     publicKeys = [ dfrancoeur ];
     armor = true;
