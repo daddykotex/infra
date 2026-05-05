@@ -57,3 +57,9 @@ Host key verification failed.
 If you do, just run the suggested command.
 
 7. SSH into the box, you'll see `root@nixos` as the prompt.
+
+### Notes
+
+**nixos-anywhere-examples**
+
+Checkout the [flake.nix](flake.nix) for examples tested on different hosters.
