@@ -31,8 +31,6 @@
         modules = [
           agenix.nixosModules.default
           ./rasp1/default.nix
-          # Package ‘zfs-kernel-2.3.6-7.0.3’ is broken
-          { nixpkgs.config.allowBroken = true; }
         ];
       };
     };
