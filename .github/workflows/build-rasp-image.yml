@@ -19,14 +19,12 @@ jobs:
       - name: Build SD image
         run: |
           nix build .#nixosConfigurations.rasp1.config.system.build.sdImage
-          tree result/
-      - name: Decompress image
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
+
           img=$(ls result/sd-image/*.img.zst)
-          mv $img rasp1.img.zst
+          echo "IMG_LOCATION=$img" >> $GITHUB_ENV
+          echo "Built $IMG_LOCATION"
       - name: Create GitHub release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: rasp1.img
+          files: ${{ env.IMG_LOCATION }}
