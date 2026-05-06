@@ -21,10 +21,20 @@ jobs:
           nix build .#nixosConfigurations.rasp1.config.system.build.sdImage
 
           img=$(ls result/sd-image/*.img.zst)
+          # Export for other steps
           echo "IMG_LOCATION=$img" >> $GITHUB_ENV
-          echo "Built $IMG_LOCATION"
+          echo "Built $img"
+      - name: Encrypt for release
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          echo "${{ secrets.RASP1_IMAGE_AGE_KEY_BASE64 }}" | base64 -d > key.txt
+          age_filename=$(basename "$img").age
+          echo "IMG_AGE_LOCATION=$age_filename" >> $GITHUB_ENV
+
+          echo "Writing encrypted image file to $age_filename"
+          nix run -I nixpkgs=channel:nixpkgs nixpkgs#age -- -e -i key.txt -o "$age_filename" "$img"
       - name: Create GitHub release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.IMG_LOCATION }}
+          files: ${{ env.IMG_AGE_LOCATION }}
