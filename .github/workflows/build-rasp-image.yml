@@ -24,15 +24,17 @@ jobs:
           # Export for other steps
           echo "IMG_LOCATION=$img" >> $GITHUB_ENV
           echo "Built $img"
+          ls -alh "$img"
       - name: Encrypt for release
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           echo "${{ secrets.RASP1_IMAGE_AGE_KEY_BASE64 }}" | base64 -d > key.txt
-          age_filename=$(basename "$img").age
+          age_filename=$(basename "$IMG_LOCATION").age
           echo "IMG_AGE_LOCATION=$age_filename" >> $GITHUB_ENV
 
           echo "Writing encrypted image file to $age_filename"
-          nix run -I nixpkgs=channel:nixpkgs nixpkgs#age -- -e -i key.txt -o "$age_filename" "$img"
+          nix run -I nixpkgs=channel:nixpkgs nixpkgs#age -- -e -i key.txt -o "$age_filename" "$IMG_LOCATION"
+          ls -alh "$age_filename"
       - name: Create GitHub release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
