@@ -22,5 +22,12 @@
           ./box1/default.nix
         ];
       };
+      nixosConfigurations.rasp1 = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [
+          agenix.nixosModules.default
+          ./rasp1/default.nix
+        ];
+      };
     };
 }
