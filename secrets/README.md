@@ -37,5 +37,13 @@ nix run github:ryantm/agenix -- -e lmah-env.agenix
 
 # or redirect an existing .env file into agenix
 nix run github:ryantm/agenix -- -e lmah-env.age < /path/to/.env
+
+# specify the identify
+nix run github:ryantm/agenix -- -i ~/.ssh/id_rsa -e lmah-env.age < /path/to/.env
 ```
 
+## Decrypt a file
+
+```
+nix-shell -p age --run "age -d -i ~/.ssh/id_rsa_dfrancoeur rasp1-ssh-private-key.age" > ./.local/ssh_host_ed25519_key
+```

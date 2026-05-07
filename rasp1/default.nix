@@ -7,24 +7,17 @@
       file = ../secrets/rasp1-wifi-password.age;
     };
 
-    age.secrets.rasp1-ssh-private-key = {
-      file = ../secrets/rasp1-ssh-private-key.age;
-    };
-
     # Pre-provisioned SSH host key so agenix can decrypt secrets at first boot
     services.openssh = {
       enable = true;
       hostKeys = [
         {
-          path = "/etc/ssh/ssh_host_ed25519_key";  # path to the private key file
+          # path to the private key file
+          # key needs to be loaded on the device manually
+          path = "/etc/ssh/ssh_host_ed25519_key";
           type = "ed25519";
         }
       ];
-    };
-    # Embed the private key into the image
-    environment.etc."ssh/ssh_host_ed25519_key" = {
-      source = config.age.secrets.rasp1-ssh-private-key.path;  # path to the private key file
-      mode = "0600";
     };
 
     networking = {

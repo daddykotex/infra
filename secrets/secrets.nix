@@ -10,7 +10,7 @@ in
   "lmah-env.age".publicKeys = [ dfrancoeur box1 ];
   "lmah-calendar-gcp-sa-key-json.age".publicKeys = [ dfrancoeur box1 ];
   "rasp1-wifi-password.age".publicKeys = [ dfrancoeur rasp1 ];
-  "rasp1-ssh-private-key.age".publicKeys = [ dfrancoeur rasp1 ];
+  # "rasp1-ssh-private-key.age" is meant to be loaded manually on the raspberry pi
 
   "armored-secret.age" = {
     publicKeys = [ dfrancoeur ];
