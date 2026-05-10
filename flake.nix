@@ -26,12 +26,20 @@
           ./box1/default.nix
         ];
       };
-      nixosConfigurations.rasp1 = rasp1-nixpkgs.lib.nixosSystem {
+      nixosConfigurations.rasp1Install = rasp1-nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         modules = [
           agenix.nixosModules.default
-          ./rasp1/default.nix
+          ./rasp1/install.nix
         ];
       };
+      # Re-enable after the machine is installed, and public key is retrieved
+      # nixosConfigurations.rasp1 = rasp1-nixpkgs.lib.nixosSystem {
+      #   system = "aarch64-linux";
+      #   modules = [
+      #     agenix.nixosModules.default
+      #     ./rasp1/default.nix
+      #   ];
+      # };
     };
 }

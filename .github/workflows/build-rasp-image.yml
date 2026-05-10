@@ -18,7 +18,7 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build SD image
         run: |
-          nix build .#nixosConfigurations.rasp1.config.system.build.sdImage
+          nix build .#nixosConfigurations.rasp1Install.config.system.build.sdImage
 
           img=$(ls result/sd-image/*.img.zst)
           # Export for other steps
