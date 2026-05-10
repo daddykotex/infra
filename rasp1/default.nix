@@ -26,9 +26,10 @@
       interfaces.wlan0.useDHCP = true;
       wireless = {
         enable = true;
+        # see: https://search.nixos.org/options?channel=25.11&query=wireless.secretsFile#show=option%253Anetworking.wireless.secretsFile
         secretsFile = config.age.secrets.rasp1-wifi-password.path;
         networks."davidetkateryne" = {
-          pskRaw = "ext:psk_home";
+          pskRaw = "ext:PASS_DAVIDETKATERYNE";
         };
       };
     };
