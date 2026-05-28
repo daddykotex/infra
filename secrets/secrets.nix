@@ -4,7 +4,7 @@ let
 
   # target systems
   box1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIpBdCFDihFhTDcAOt99DzSvt2tekKiXKh79v/9J/BJL";
-  rasp1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINoz8IgEnPL+UyYXvwSNdaHZaKtwkY11HzfN9USuH5/S";
+  rasp1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN+9soUd8xZaM9yYHwWzKtdjjAd0aZfWia49K1MEWSm6";
 in
 {
   "lmah-env.age".publicKeys = [ dfrancoeur box1 ];
