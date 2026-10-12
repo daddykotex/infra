@@ -94,9 +94,10 @@ in
       group_gcp_lmah # ensure both can read the secret # TODO use different secret keys
       config.services.myLitestream.databases.lmah.group # ensure both can access the db
     ];
-    
-    extraPreStart = ''                                                                                                                                                                                       
-      cp -rT ${config.services.lmah.package}/static /opt/lmah/static                                                                                                                                       
+
+    extraPreStart = ''
+      rm -rf /opt/lmah/static; mkdir -p /opt/lmah/static
+      cp -rT ${config.services.lmah.package}/static /opt/lmah/static
     '';
     binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${config.services.myLitestream.databases.lmah.path} --port ${toString lmahPort}";
     secrets = [
