@@ -5,8 +5,8 @@
   ...
 }:
 let
-  defaultVersion = "0.1.5";
-  defaultHash = "sha256:245b4cadfb8b6c419ee48c1ef7f07aa2553508804c1a3dadb5cd4880001213d5";
+  defaultVersion = "0.1.7";
+  defaultHash = "sha256:74a911a2f22db06073afc96068a19b6560e9f1229722e555eeff70dacc222af8";
 
   systemToTarget = {
     "x86_64-linux" = "linux-x86_64";
