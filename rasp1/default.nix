@@ -25,12 +25,10 @@
     # Enables the generation of /boot/extlinux/extlinux.conf
     boot.loader.generic-extlinux-compatible.enable = true;
 
-    # networking.hostName = "nixos"; # Define your hostname.
-
     # Configure network connections interactively with nmcli or nmtui.
     # networking.networkmanager.enable = true;
     networking = {
-      useDHCP = false;
+      hostName = "rasp1"; # Define your hostname.
       usePredictableInterfaceNames = false;
       interfaces.wlan0.useDHCP = true;
       wireless = {
@@ -95,7 +93,6 @@
     };
     users.users.root = {
       isSystemUser = true;
-      extraGroups = [ "wheel" ];
 
       hashedPassword = "$6$Y91w2hVA1M8xtV5K$rzo64xRsiyjkqL79xqEwBVF3s4RgKTiWtAuPdxo5Q9zZ7bQ5TLPzbCcpzWY5cyoCzdl8WOO.ecbfzgmeTNC7P.";
       openssh.authorizedKeys.keys = [

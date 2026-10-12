@@ -3,6 +3,26 @@
 This repository will host everything related to infrastructure for my needs.
 For now, this is:
 
+## rasp1
+
+A raspberry pi 3+ that's plugged in my home. I use it as a control center for all the operations of my other boxes.
+
+### how to
+
+On CI, a NixOS img is generated, eg: https://github.com/daddykotex/infra/releases/tag/v0.1.5.
+
+1. Download the compressed image
+2. Decompress it: `nix-shell -p zstd --run "unzstd /path/to/image"`
+3. Using Raspberry Imager, burn this image to the SD card you'll install on the Raspberry Pi
+4. Plug in the Raspberry Pi
+5. SSH into it to validate that it works `ssh root@xx.xx.xx.xx` (it should work because the base image knows my SSH key)
+6. Export the `/etc/nixos/configuration.nix` and `/etc/nixox/hardware-configuration.nix`
+6. Include them (with some modifications) in your `rasp1` flake
+7. `ssh-keyscan xx.xx.xx.xx` to grab the SSH key and add it to the secrets.nix for this machine (`rasp1`)
+7. Re-key the secrets for the SSH key `nix run github:ryantm/agenix -- -r -i /Users/davidfrancoeur/.ssh/id_rsa_dfrancoeur`
+8. Build on the Raspberry pi: `nix run nixpkgs#nixos-rebuild -- build --fast --flake .#rasp1 --target-host root@xx.xx.xx.xx --build-host root@xx.xx.xx.xx`
+9. Install and switch: `nix run nixpkgs#nixos-rebuild -- switch --fast --flake .#rasp1 --target-host root@192.168.18.28 --build-host root@192.168.18.28`
+
 ## box1
 
 A NixOS box where we deploy
