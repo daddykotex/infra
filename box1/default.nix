@@ -81,11 +81,7 @@ in
     };
   };
 
-  # LMAH inventory app
-  services.lmah = {
-    version = "0.1.7";
-    hash = "sha256:74a911a2f22db06073afc96068a19b6560e9f1229722e555eeff70dacc222af8";
-  };
+  # LMAH inventory app (version/hash pinned in modules/apps/lmah.json)
   services.myApp = {
     enable = true;
     name = "lmah";

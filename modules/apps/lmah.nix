@@ -5,8 +5,7 @@
   ...
 }:
 let
-  defaultVersion = "0.1.7";
-  defaultHash = "sha256:74a911a2f22db06073afc96068a19b6560e9f1229722e555eeff70dacc222af8";
+  release = lib.importJSON ./lmah.json;
 
   systemToTarget = {
     "x86_64-linux" = "linux-x86_64";
@@ -43,14 +42,14 @@ in
   options.services.lmah = {
     version = lib.mkOption {
       type = lib.types.str;
-      default = defaultVersion;
-      description = "Version of the lmah server binary to download.";
+      default = release.version;
+      description = "Version of the lmah server binary to download. Defaults to the value in modules/apps/lmah.json.";
     };
 
     hash = lib.mkOption {
       type = lib.types.str;
-      default = defaultHash;
-      description = "SHA256 hash of the lmah server binary.";
+      default = release.hash;
+      description = "SHA256 hash of the lmah server binary. Defaults to the value in modules/apps/lmah.json.";
     };
 
     package = lib.mkOption {
