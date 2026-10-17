@@ -91,11 +91,7 @@ in
       config.services.myLitestream.databases.lmah.group # ensure both can access the db
     ];
 
-    extraPreStart = ''
-      rm -rf /opt/lmah/static; mkdir -p /opt/lmah/static
-      cp -rT ${config.services.lmah.package}/static /opt/lmah/static
-    '';
-    binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${config.services.myLitestream.databases.lmah.path} --port ${toString lmahPort}";
+    binary = "${pkgs.direnv}/bin/direnv exec . ${config.services.lmah.package}/bin/lmah-server --db-url sqlite://${config.services.myLitestream.databases.lmah.path} --port ${toString lmahPort} --lmah-static-dir ${config.services.lmah.package}/static";
     secrets = [
       {
         description = "Application environment variables";
